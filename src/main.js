@@ -252,6 +252,37 @@ app.innerHTML = `
       </div>
     </section>
 
+    <section class="wrap section reveal">
+      <div class="section-head">
+        <p class="kicker">Quick profile guide</p>
+        <h2>Ask a few questions and learn what I do in a minute.</h2>
+      </div>
+      <div class="chat-shell">
+        <div class="chat-card">
+          <div class="chat-header">
+            <div>
+              <strong>Ruchit Assistant</strong>
+              <span>Profile guide</span>
+            </div>
+            <span class="chat-status">Online</span>
+          </div>
+          <div id="chat-messages" class="chat-messages">
+            <div class="message bot">Hi! I can tell you about my stack, projects, QA automation work, and experience. Try one of the prompts below.</div>
+          </div>
+          <div class="chat-suggestions" role="list">
+            <button class="chip" type="button" data-question="What stack do you use?">What stack do you use?</button>
+            <button class="chip" type="button" data-question="Tell me about your QA work.">Tell me about your QA work.</button>
+            <button class="chip" type="button" data-question="What projects have you built?">What projects have you built?</button>
+            <button class="chip" type="button" data-question="How can I contact you?">How can I contact you?</button>
+          </div>
+          <form id="chat-form" class="chat-form">
+            <input id="chat-input" type="text" name="question" placeholder="Ask about my work, skills, or projects" autocomplete="off" />
+            <button class="btn btn-primary" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section id="contact" class="wrap section contact-section reveal">
       <p class="kicker">Contact</p>
       <h2>Let’s build something that ships with confidence.</h2>
@@ -343,6 +374,107 @@ function renderPipeline() {
 }
 
 renderPipeline();
+
+const chatMessages = document.getElementById('chat-messages');
+const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
+const suggestionButtons = document.querySelectorAll('.chip');
+
+function appendMessage(role, text) {
+  if (!chatMessages) return;
+  const message = document.createElement('div');
+  message.className = `message ${role}`;
+  message.textContent = text;
+  chatMessages.appendChild(message);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function getLocalResponse(question) {
+  const q = question.toLowerCase();
+
+  if (q.includes('stack') || q.includes('tech') || q.includes('java') || q.includes('react') || q.includes('node')) {
+    return 'I work with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. I enjoy building full-stack features that feel reliable from API to UI.';
+  }
+
+  if (q.includes('qa') || q.includes('playwright') || q.includes('testing') || q.includes('test')) {
+    return 'My QA work is a core part of how I build. I use Playwright, GitHub Actions, and API mocking to validate critical user flows in a repeatable way.';
+  }
+
+  if (q.includes('project') || q.includes('built') || q.includes('work')) {
+    return 'I have built projects around AI speaking practice, job automation, travel booking, and delivery-platform workflows. The common thread is turning a real problem into a useful system.';
+  }
+
+  if (q.includes('contact') || q.includes('email') || q.includes('linkedin') || q.includes('github') || q.includes('hire')) {
+    return 'You can reach me at ruchitchudasama123@gmail.com, connect on LinkedIn, or browse my GitHub work. I am open to collaborations and product-focused opportunities.';
+  }
+
+  if (q.includes('experience') || q.includes('background') || q.includes('story')) {
+    return 'My path has moved from personal side projects to professional delivery, with experience in contract work, co-op software development, and earlier junior developer roles. I have grown from building for my own needs to shipping for real users.';
+  }
+
+  return 'I can tell you about my stack, QA work, projects, and experience. Try asking about Playwright, Java, React, my projects, or how to contact me.';
+}
+
+async function getAssistantResponse(question) {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (apiKey) {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `You are a concise portfolio assistant for Ruchit Chudasama. Answer in 2 to 4 short sentences. Use the following notes: Java/Spring Boot, React, Node.js/Express, MySQL/PostgreSQL/MongoDB, Playwright, GitHub Actions, AI projects, contract/co-op experience, contact at ruchitchudasama123@gmail.com. Question: ${question}`,
+            }],
+          }],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) return text.trim();
+      }
+    } catch (error) {
+      console.warn('Gemini fallback triggered', error);
+    }
+  }
+
+  return getLocalResponse(question);
+}
+
+async function handleChatSubmit(event) {
+  event.preventDefault();
+  if (!chatInput || !chatMessages) return;
+
+  const question = chatInput.value.trim();
+  if (!question) return;
+
+  appendMessage('user', question);
+  chatInput.value = '';
+  chatInput.disabled = true;
+
+  const reply = await getAssistantResponse(question);
+  appendMessage('bot', reply);
+  chatInput.disabled = false;
+  chatInput.focus();
+}
+
+suggestionButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    if (chatInput) {
+      chatInput.value = button.dataset.question || '';
+      chatInput.focus();
+    }
+  });
+});
+
+if (chatForm) {
+  chatForm.addEventListener('submit', handleChatSubmit);
+}
 
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
