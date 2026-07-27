@@ -380,6 +380,10 @@ const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const suggestionButtons = document.querySelectorAll('.chip');
 
+const conversationState = {
+  userName: '',
+};
+
 function appendMessage(role, text) {
   if (!chatMessages) return;
   const message = document.createElement('div');
@@ -389,30 +393,73 @@ function appendMessage(role, text) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+function normalizeText(text) {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function getLocalResponse(question) {
-  const q = question.toLowerCase();
+  const q = normalizeText(question);
+  const { userName } = conversationState;
 
-  if (q.includes('stack') || q.includes('tech') || q.includes('java') || q.includes('react') || q.includes('node')) {
-    return 'I work with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. I enjoy building full-stack features that feel reliable from API to UI.';
+  if (/(^|\s)(hi|hello|hey|hey there|good morning|good afternoon|good evening)(\s|$)/.test(q)) {
+    return userName
+      ? `Hi ${userName}! I’m Ruchit Assistant. I can tell you about Ruchit’s work, stack, QA automation, and projects. What would you like to know?`
+      : 'Hi! I’m Ruchit Assistant. I can tell you about Ruchit’s work, stack, QA automation, and projects. What would you like to know?';
   }
 
-  if (q.includes('qa') || q.includes('playwright') || q.includes('testing') || q.includes('test')) {
-    return 'My QA work is a core part of how I build. I use Playwright, GitHub Actions, and API mocking to validate critical user flows in a repeatable way.';
+  if (/(what is your name|who are you|who are u|your name)/.test(q)) {
+    return 'I’m Ruchit Assistant — a friendly guide for Ruchit Chudasama. I help visitors learn about his work in a more conversational way.';
   }
 
-  if (q.includes('project') || q.includes('built') || q.includes('work')) {
-    return 'I have built projects around AI speaking practice, job automation, travel booking, and delivery-platform workflows. The common thread is turning a real problem into a useful system.';
+  if (/(my name is|i am |i'm )/.test(q)) {
+    const match = q.match(/(?:my name is|i am|i'm)\s+([a-z]+(?:\s+[a-z]+)*)/);
+    if (match && match[1]) {
+      conversationState.userName = match[1].replace(/\s+/g, ' ').trim();
+      return `Nice to meet you, ${conversationState.userName}. I’m happy to help you learn about Ruchit.`;
+    }
   }
 
-  if (q.includes('contact') || q.includes('email') || q.includes('linkedin') || q.includes('github') || q.includes('hire')) {
-    return 'You can reach me at ruchitchudasama123@gmail.com, connect on LinkedIn, or browse my GitHub work. I am open to collaborations and product-focused opportunities.';
+  if (/(what is my name|who am i|do you know my name)/.test(q)) {
+    return userName ? `You told me your name is ${userName}.` : 'I don’t know your name yet — what should I call you?';
   }
 
-  if (q.includes('experience') || q.includes('background') || q.includes('story')) {
-    return 'My path has moved from personal side projects to professional delivery, with experience in contract work, co-op software development, and earlier junior developer roles. I have grown from building for my own needs to shipping for real users.';
+  if (/(how are you|how's it going|how are u|how are ya)/.test(q)) {
+    return 'I’m doing well, thanks. I’m here to help you learn about Ruchit’s background and work.';
   }
 
-  return 'I can tell you about my stack, QA work, projects, and experience. Try asking about Playwright, Java, React, my projects, or how to contact me.';
+  if (/(what do you do|what are you|who do you work for|what can you do)/.test(q)) {
+    return 'I help visitors understand Ruchit’s skills, projects, and QA mindset in a conversational way. Think of me as a friendly guide to his portfolio.';
+  }
+
+  if (/(stack|tech|skills|languages|frameworks|java|react|node|spring boot)/.test(q)) {
+    return 'Ruchit works with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. He likes building systems that feel practical and dependable.';
+  }
+
+  if (/(qa|playwright|testing|test automation|automate|ci)/.test(q)) {
+    return 'QA is a big part of how he builds. He uses Playwright, GitHub Actions, and API mocking to validate critical flows in a repeatable way.';
+  }
+
+  if (/(project|projects|built|portfolio|work)/.test(q)) {
+    return 'He has built projects around AI speaking practice, job automation, travel booking, and delivery-platform workflows. The common theme is solving real problems with useful products.';
+  }
+
+  if (/(experience|background|journey|story|career)/.test(q)) {
+    return 'His path moved from personal side projects to professional delivery, including co-op and contract roles. He grew from solving his own problems to building systems for real users.';
+  }
+
+  if (/(contact|email|linkedin|github|hire|reach you)/.test(q)) {
+    return 'You can reach him at ruchitchudasama123@gmail.com, connect on LinkedIn, or check his GitHub profile for more examples of his work.';
+  }
+
+  if (/(thanks|thank you|appreciate)/.test(q)) {
+    return 'You’re welcome. I’m happy to help.';
+  }
+
+  if (/(bye|goodbye|see you|talk to you later)/.test(q)) {
+    return 'Nice chatting with you. If you want, I can tell you more about his projects, QA work, or how to contact him.';
+  }
+
+  return 'That’s a good question. I can tell you about his stack, projects, QA work, experience, or how to get in touch. What would you like to know?';
 }
 
 async function getAssistantResponse(question) {
@@ -457,6 +504,7 @@ async function handleChatSubmit(event) {
   chatInput.value = '';
   chatInput.disabled = true;
 
+  await new Promise((resolve) => setTimeout(resolve, 380));
   const reply = await getAssistantResponse(question);
   appendMessage('bot', reply);
   chatInput.disabled = false;
