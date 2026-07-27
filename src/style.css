@@ -1,19 +1,19 @@
 :root {
-  --bg: #06111f;
-  --bg-soft: #0d1727;
-  --panel: #101b2e;
-  --panel-strong: #15253c;
-  --border: rgba(148, 193, 255, 0.16);
-  --text: #f5f7fb;
-  --text-muted: #9ab0cb;
-  --accent: #5eead4;
-  --accent-strong: #22d3ee;
-  --accent-warm: #f9c74f;
+  --bg: #050b14;
+  --bg-soft: #091321;
+  --panel: #0d1726;
+  --panel-strong: #101d30;
+  --border: rgba(122, 175, 255, 0.16);
+  --text: #f4f7fb;
+  --text-muted: #8ea3bb;
+  --accent: #7ee7d2;
+  --accent-strong: #48b8ff;
+  --accent-warm: #ffcf6f;
   --font-display: 'Sora', 'Inter', sans-serif;
   --font-body: 'Inter', 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
-  --max-width: 1160px;
-  --radius: 24px;
+  --max-width: 1180px;
+  --radius: 22px;
 }
 
 * {
@@ -28,8 +28,8 @@ html {
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(34, 211, 238, 0.12), transparent 24%),
-    linear-gradient(135deg, var(--bg) 0%, #071421 100%);
+    radial-gradient(circle at top left, rgba(72, 184, 255, 0.14), transparent 28%),
+    linear-gradient(135deg, var(--bg) 0%, #07111d 100%);
   color: var(--text);
   font-family: var(--font-body);
   line-height: 1.65;
@@ -389,7 +389,7 @@ h3 {
 }
 
 .section {
-  padding: 24px 0 0;
+  padding: 28px 0 0;
 }
 
 .section-head {
@@ -420,8 +420,9 @@ h3 {
 .timeline-item {
   border: 1px solid var(--border);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
   padding: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .project-top {
@@ -430,6 +431,35 @@ h3 {
   align-items: start;
   gap: 10px;
   margin-bottom: 10px;
+}
+
+.project-meta {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+}
+
+.project-meta span {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.project-meta strong {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .project-badge {

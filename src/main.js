@@ -5,25 +5,75 @@ const app = document.getElementById('app');
 
 const stageData = [
   {
+    id: 'code',
+    title: 'Code',
+    label: 'Problem → implementation',
+    detail: 'I start from a real need and translate it into a working product with Java/Spring Boot, React, or Node.js/Express.',
+    metric: 'Full-stack implementation',
+  },
+  {
     id: 'build',
     title: 'Build',
-    label: 'Product shaping',
-    detail: 'I turn a real problem into a working feature in Java/Spring Boot, React, or Node/Express.',
+    label: 'System wiring',
+    detail: 'I connect the UI, API layer, and data model so the feature behaves like a coherent system, not a one-off script.',
     metric: 'Backend + UI',
   },
   {
     id: 'test',
-    title: 'Test',
-    label: 'QA automation',
-    detail: 'I wire Playwright tests around critical flows, mock external APIs, and keep the suite runnable in CI.',
+    title: 'Playwright',
+    label: 'Proof in CI',
+    detail: 'I write Playwright tests around critical flows, mock external APIs, and keep the suite runnable in GitHub Actions.',
     metric: 'Playwright + CI',
   },
   {
     id: 'deploy',
     title: 'Deploy',
     label: 'Release confidence',
-    detail: 'I ship with the same discipline I use in automation: fast feedback, repeatable checks, and fewer surprises.',
+    detail: 'I ship with the same discipline I use in automation: repeatable checks, fast feedback, and fewer surprises.',
     metric: 'GitHub Actions',
+  },
+];
+
+const projects = [
+  {
+    title: 'TEF Speaking Coach',
+    badge: 'AI speaking practice',
+    description: 'Built for TEF French prep, this tool captures speech, transcribes responses, and scores them against the exam criteria I was training for.',
+    stack: ['React', 'Node.js', 'AI workflow'],
+    outcome: 'Turned a personal study need into a reusable product loop.',
+    link: 'https://github.com/ruchit3601/tef-speaking-coach',
+  },
+  {
+    title: 'JobPilot',
+    badge: 'Chrome extension',
+    description: 'A job-application assistant that tailors resumes and cover letters directly for postings, built around a lightweight client-side workflow.',
+    stack: ['Chrome extension', 'JavaScript', 'AI assistance'],
+    outcome: 'Cut the repetitive parts of job applications down to a single flow.',
+    link: 'https://github.com/ruchit3601/AI_JobPilot',
+  },
+  {
+    title: 'JobMatch AI',
+    badge: 'Automation pipeline',
+    description: 'An automation pipeline that discovers roles, scores fit, and drafts application materials without manual handoff.',
+    stack: ['n8n', 'Groq', 'Automation'],
+    outcome: 'Moved role discovery and drafting from manual effort to a repeatable process.',
+    link: 'https://github.com/ruchit3601',
+  },
+  {
+    title: 'Food Delivery Platform',
+    badge: 'Delivery operations',
+    description: 'Delivered an order-management and live-tracking platform with JWT access control, containerization, and deployment automation.',
+    stack: ['Java', 'Spring Boot', 'Docker'],
+    outcome: 'Built a platform that needed to be reliable for real users.',
+    link: 'https://github.com/ruchit3601',
+  },
+  {
+    title: 'Skyward Travels',
+    badge: 'Travel booking',
+    description: 'Contributed to a travel-booking experience covering search flows, booking logic, and multi-service backend integration.',
+    stack: ['React', 'Node.js', 'MySQL/PostgreSQL/MongoDB'],
+    outcome: 'Expanded from side projects into multi-service product work.',
+    link: 'https://github.com/ruchit3601',
   },
 ];
 
@@ -47,17 +97,17 @@ app.innerHTML = `
   <main id="top">
     <section class="hero wrap">
       <div class="hero-copy reveal">
-        <p class="kicker">From student curiosity to shipped products</p>
-        <h1>I started by solving my own problems, then learned how to prove them.</h1>
-        <p class="hero-text">I’m Ruchit Chudasama. I began as a student who wanted better tools for everyday challenges, then grew into a developer who could build the product, the backend, and the automated tests that make it reliable. Every step in my journey added a new layer: curiosity, craft, and now ownership.</p>
+        <p class="kicker">Computer Engineering · Full Stack Developer · QA Automation Engineer</p>
+        <h1>I build the product and the proof.</h1>
+        <p class="hero-text">I’m Ruchit Chudasama. I work across Java/Spring Boot, React, Node.js/Express, and SQL/NoSQL systems, and I also write the Playwright suites that verify the experience end to end. My edge is not a side skill — it is the way I build.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#work">See the work</a>
+          <a class="btn btn-primary" href="#work">View projects</a>
           <a class="btn btn-ghost" href="https://www.linkedin.com/in/ruchit-chudasama-040070211/" target="_blank" rel="noopener">LinkedIn</a>
         </div>
         <ul class="hero-highlights">
           <li>Java / Spring Boot</li>
           <li>React / Node.js / Express</li>
-          <li>Playwright · GitHub Actions · API mocking</li>
+          <li>MySQL / PostgreSQL / MongoDB</li>
         </ul>
       </div>
 
@@ -67,74 +117,39 @@ app.innerHTML = `
             <p class="panel-eyebrow">Signature interaction</p>
             <h2 id="pipeline-title">Delivery pipeline</h2>
           </div>
-          <span class="panel-pill">CI → QA → Deploy</span>
+          <span class="panel-pill">Code → Build → Playwright → Deploy</span>
         </div>
         <div id="pipeline" class="pipeline-shell"></div>
-        <div class="hero-metrics">
-          <div>
-            <strong>Step 1</strong>
-            <span>student curiosity turned into side projects</span>
-          </div>
-          <div>
-            <strong>Step 2</strong>
-            <span>real internships and contracts sharpened delivery</span>
-          </div>
-          <div>
-            <strong>Step 3</strong>
-            <span>full-stack building with QA thinking became the norm</span>
-          </div>
-        </div>
       </div>
     </section>
 
     <section id="work" class="wrap section reveal">
       <div class="section-head">
-        <p class="kicker">The story in projects</p>
-        <h2>Each project began with a problem I felt personally, then grew into something real.</h2>
+        <p class="kicker">Projects</p>
+        <h2>Each project began with a concrete problem and ended in a working system.</h2>
       </div>
       <div class="project-grid">
-        <article class="project-card">
-          <div class="project-top">
-            <h3>TEF Speaking Coach</h3>
-            <span class="project-badge">AI speaking practice</span>
-          </div>
-          <p>As a student preparing for the TEF exam, I needed a better way to practice speaking. That need became a full tool for speech capture, transcription, and scoring.</p>
-        </article>
-        <article class="project-card">
-          <div class="project-top">
-            <h3>JobPilot</h3>
-            <span class="project-badge">Chrome extension</span>
-          </div>
-          <p>When job applications started feeling repetitive, I built a helper that could tailor applications faster and with less manual effort.</p>
-        </article>
-        <article class="project-card">
-          <div class="project-top">
-            <h3>JobMatch AI</h3>
-            <span class="project-badge">Automation pipeline</span>
-          </div>
-          <p>That habit of automating friction kept growing, until I had a pipeline that could discover roles, assess fit, and draft application materials.</p>
-        </article>
-        <article class="project-card">
-          <div class="project-top">
-            <h3>Food Delivery Platform</h3>
-            <span class="project-badge">Delivery operations</span>
-          </div>
-          <p>Once I moved into professional delivery, I started building systems that needed to be reliable for users, not just functional for one person.</p>
-        </article>
-        <article class="project-card">
-          <div class="project-top">
-            <h3>Skyward Travels</h3>
-            <span class="project-badge">Travel booking</span>
-          </div>
-          <p>In my co-op role, that experience expanded into larger product work, where I contributed to booking flows and multi-service backend logic.</p>
-        </article>
+        ${projects.map((project) => `
+          <article class="project-card">
+            <div class="project-top">
+              <h3>${project.title}</h3>
+              <span class="project-badge">${project.badge}</span>
+            </div>
+            <p>${project.description}</p>
+            <div class="project-meta">
+              <span>${project.stack.join(' · ')}</span>
+              <strong>${project.outcome}</strong>
+            </div>
+            <a class="project-link" href="${project.link}" target="_blank" rel="noopener">Open project ↗</a>
+          </article>
+        `).join('')}
       </div>
     </section>
 
     <section id="qa" class="wrap section reveal">
       <div class="section-head">
-        <p class="kicker">The quality chapter</p>
-        <h2>As the work became more serious, quality became part of the build itself.</h2>
+        <p class="kicker">QA / Testing</p>
+        <h2>This is a dedicated capability, not an afterthought.</h2>
       </div>
       <div class="qa-grid">
         <article class="qa-card">
@@ -142,22 +157,22 @@ app.innerHTML = `
           <ul class="detail-list">
             <li>
               <strong>LambdaTest Playwright 101</strong>
-              <span>Certificate details verified from the provider listing; credential ID and issue date are retained in the certificate asset.</span>
+              <span>Completed with certification details retained in the official certificate asset.</span>
             </li>
             <li>
               <strong>Advanced Playwright — TestAutomationU</strong>
-              <span>Certificate details verified from the provider listing; credential ID and issue date are retained in the certificate asset.</span>
+              <span>Completed with certification details retained in the official certificate asset.</span>
             </li>
           </ul>
         </article>
 
         <article class="qa-card">
           <h3>Playwright suite I built</h3>
-          <p>For one of my own AI projects, I moved from building features to proving them. I created a headless Playwright suite that mocks external API calls and exercises the core flow in GitHub Actions CI, catching the kind of issue that can slip through a visual check.</p>
+          <p>For one of my own AI projects, I created a headless Playwright suite that mocks external API calls and exercises the core user journey in GitHub Actions CI. The suite targets the failure mode where an upstream API response breaks the visible state even when the UI looks healthy.</p>
           <ul class="detail-list">
-            <li>Mocks API responses so the UI is tested without brittle third-party dependencies.</li>
-            <li>Runs headlessly in GitHub Actions for quick, repeatable validation.</li>
-            <li>Protects critical user flows from regressions that are easy to miss in a manual pass.</li>
+            <li>Mocks external API responses to keep the suite deterministic.</li>
+            <li>Runs headlessly in GitHub Actions for rapid CI validation.</li>
+            <li>Protects critical flows from regressions that can slip through a visual check.</li>
           </ul>
         </article>
 
@@ -176,8 +191,8 @@ app.innerHTML = `
 
     <section id="experience" class="wrap section reveal">
       <div class="section-head">
-        <p class="kicker">How the story evolved</p>
-        <h2>From learning the basics to owning delivery in real teams.</h2>
+        <p class="kicker">Experience & Education</p>
+        <h2>A steady move from learning to owning delivery.</h2>
       </div>
       <div class="timeline">
         <article class="timeline-item">
@@ -185,9 +200,9 @@ app.innerHTML = `
           <h3>Full Stack Developer · Contract</h3>
           <p>Dodge Data &amp; Analytics · Remote, Canada</p>
           <ul>
-            <li>Worked on Blue Book, a live commercial-construction platform that connects contractors and suppliers.</li>
-            <li>Shipped fixes and features across an existing Angular/jQuery estate and the supporting Java/Node.js backend.</li>
-            <li>Wrote SQL logic and data handling for contractor profiles and bid-management workflows.</li>
+            <li>Worked on Blue Book, a commercial construction platform connecting contractors and suppliers.</li>
+            <li>Shipped fixes and features across an existing Angular/jQuery frontend and supporting Java/Node.js backend.</li>
+            <li>Wrote SQL logic and data handling for contractor profiles and bid workflows.</li>
           </ul>
         </article>
         <article class="timeline-item">
@@ -195,8 +210,8 @@ app.innerHTML = `
           <h3>Software Developer · Co-op</h3>
           <p>SilverThread Solutions · Toronto, ON</p>
           <ul>
-            <li>Owned full-stack work on Skyward Travels, a travel-booking experience with flight and hotel search plus loyalty-point flows.</li>
-            <li>Designed REST APIs across MongoDB, MySQL, and PL/SQL depending on the client needs.</li>
+            <li>Owned full-stack work on Skyward Travels, a travel-booking experience with search, booking, and loyalty flows.</li>
+            <li>Designed APIs across MongoDB, MySQL, and PL/SQL depending on client needs.</li>
           </ul>
         </article>
         <article class="timeline-item">
@@ -204,8 +219,8 @@ app.innerHTML = `
           <h3>Junior Software Developer</h3>
           <p>The Logic Factory · Ahmedabad, India</p>
           <ul>
-            <li>Automated supply-chain scheduling workflows and built validation harnesses to catch defects before deployment.</li>
-            <li>Worked in a delivery-focused setting where quality checks mattered as much as feature delivery.</li>
+            <li>Automated supply-chain scheduling workflows and built validation harnesses.</li>
+            <li>Worked in a delivery-oriented environment where quality checks mattered before deployment.</li>
           </ul>
         </article>
       </div>
@@ -213,13 +228,12 @@ app.innerHTML = `
 
     <section class="wrap section reveal">
       <div class="section-head">
-        <p class="kicker">Why this story matters</p>
-        <h2>I care about products that work, because I’ve lived the gap between an idea and a reliable release.</h2>
+        <p class="kicker">Engineering mindset</p>
+        <h2>I care about systems that work in the real world, not just in a demo.</h2>
       </div>
       <div class="insight-grid">
         <div class="insight-card">
-          <p>Most of the tools I build start from a problem I actually feel. I got tired of manually tailoring resumes and built JobPilot and JobMatch AI. I’m studying for the TEF exam and built a speaking coach to practice against real criteria.</p>
-          <p>That habit shaped my stack: I build the product, the API layer, and the checks that keep it reliable, because I know how a promising idea can fall apart without that last layer of proof.</p>
+          <p>I started from a practical need: make my own work easier. That led to side projects that slowly grew into products and then into professional delivery. The common thread is the same: I build the feature, the supporting system, and the checks that make it trustworthy.</p>
         </div>
         <div class="insight-card stats-card">
           <div>
@@ -231,8 +245,8 @@ app.innerHTML = `
             <span>AI-integrated products shipped</span>
           </div>
           <div>
-            <strong>A2 → B1</strong>
-            <span>French progress while preparing for TEF</span>
+            <strong>Playwright</strong>
+            <span>Certified and used in real CI-driven test suites</span>
           </div>
         </div>
       </div>
@@ -318,7 +332,7 @@ function renderPipeline() {
     button.addEventListener('click', () => updateDetail(button.dataset.stage));
   });
 
-  updateDetail('build');
+  updateDetail('code');
 
   if (!reducedMotion) {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
