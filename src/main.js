@@ -289,7 +289,7 @@ app.innerHTML = `
         <span id="chat-status" class="chat-status">Online</span>
       </div>
       <div id="chat-messages" class="chat-messages">
-        <div class="message bot">Hi! I’m Ruchit Assistant, and I’m here to help you get to know Ruchit in a more natural way. Ask me anything about his work, projects, or personality.</div>
+        <div class="message bot">Hi! I’m Ruchit Assistant — the friendly guide to Ruchit Chudasama. Ask me about his stack, projects, or QA work, and I’ll make it feel personal.</div>
       </div>
       <div class="chat-suggestions" role="list">
         <button class="chip" type="button" data-question="What stack do you use?">What stack do you use?</button>
@@ -390,6 +390,9 @@ function setChatStatus(label, isTyping = false) {
   if (!chatStatus) return;
   chatStatus.textContent = label;
   chatStatus.classList.toggle('is-typing', isTyping);
+  if (chatToggle) {
+    chatToggle.classList.toggle('is-typing', isTyping);
+  }
 }
 
 if (chatStatus) {
@@ -399,6 +402,7 @@ if (chatStatus) {
 const conversationState = {
   userName: '',
   lastTopic: '',
+  hasSeenIntro: false,
 };
 
 function appendMessage(role, text) {
@@ -408,6 +412,21 @@ function appendMessage(role, text) {
   message.textContent = text;
   chatMessages.appendChild(message);
   chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function triggerIntroSequence() {
+  if (!chatMessages || conversationState.hasSeenIntro) return;
+  conversationState.hasSeenIntro = true;
+
+  window.setTimeout(() => {
+    if (!floatingPanel || floatingPanel.hidden) return;
+    appendMessage('bot', 'I’m here to make his story easy to explore. Tell me your name and I’ll make the chat feel more personal — like we’re already talking.');
+  }, 700);
+
+  window.setTimeout(() => {
+    if (!floatingPanel || floatingPanel.hidden) return;
+    appendMessage('bot', 'If you want the quick tour, I can tell you about his stack, projects, QA work, or how to reach him.');
+  }, 1400);
 }
 
 function normalizeText(text) {
@@ -420,26 +439,26 @@ function getLocalResponse(question) {
 
   if (/(^|\s)(hi|hello|hey|hey there|good morning|good afternoon|good evening)(\s|$)/.test(q)) {
     return userName
-      ? `Hi ${userName}! I’m Ruchit Assistant. I can tell you about Ruchit’s work, stack, QA automation, and projects. What would you like to know?`
-      : 'Hi! I’m Ruchit Assistant. I can tell you about Ruchit’s work, stack, QA automation, and projects. What would you like to know?';
+      ? `Hey ${userName} — I’m Ruchit Assistant. I can give you the quick tour of Ruchit’s work, stack, QA mindset, or projects. What sounds interesting?`
+      : 'Hey! I’m Ruchit Assistant. I can give you the quick tour of Ruchit’s work, stack, QA mindset, or projects. What sounds interesting?';
   }
 
   if (/(what is your name|who are you|who are u|your name)/.test(q)) {
-    return 'I’m Ruchit Assistant — a friendly guide for Ruchit Chudasama. I help visitors learn about his work in a more conversational way.';
+    return 'I’m Ruchit Assistant — a friendly guide for Ruchit Chudasama. Think of me as the calm, conversational version of his portfolio, ready to help you get the feel of his work fast.';
   }
 
   if (/(tell me more|explain that|go deeper|more about that|say more)/.test(q)) {
     const topic = conversationState.lastTopic || 'his work';
     if (topic === 'stack') {
-      return 'He likes building practical systems with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. He enjoys connecting the product layer and the backend layer so the experience feels solid.';
+      return 'He tends to build with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. The goal is usually simple: make the system feel dependable, not overbuilt.';
     }
     if (topic === 'qa') {
-      return 'His QA mindset is about trust and repeatability. He uses Playwright, GitHub Actions, and API mocking so the critical path is validated consistently instead of relying on a manual pass.';
+      return 'His QA mindset is very practical. He likes Playwright, GitHub Actions, and API mocking because they turn confidence into something repeatable instead of something you only hope for.';
     }
     if (topic === 'projects') {
-      return 'His projects often start from something personal and practical. That is why they tend to focus on real user value, useful automation, and experiences that feel smooth to use.';
+      return 'His projects usually start from a real problem and grow into something useful. That is why they often combine product thinking, automation, and a strong user experience.';
     }
-    return `Sure — I can tell you more about ${topic}.`;
+    return `Absolutely — I can tell you more about ${topic} in a more conversational way.`;
   }
 
   if (/(my name is|i am |i'm )/.test(q)) {
@@ -459,22 +478,22 @@ function getLocalResponse(question) {
   }
 
   if (/(what do you do|what are you|who do you work for|what can you do)/.test(q)) {
-    return 'I help visitors understand Ruchit’s skills, projects, and QA mindset in a conversational way. Think of me as a friendly guide to his portfolio.';
+    return 'I help visitors understand Ruchit’s skills, projects, and QA mindset in a conversational way. Think of me as the friendlier version of his portfolio — a quick, human guide instead of a dry list.';
   }
 
   if (/(stack|tech|skills|languages|frameworks|java|react|node|spring boot)/.test(q)) {
     conversationState.lastTopic = 'stack';
-    return 'Ruchit works with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. He likes building systems that feel practical and dependable.';
+    return 'Ruchit works with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. He tends to favor tools that help him build something useful and trustworthy.';
   }
 
   if (/(qa|playwright|testing|test automation|automate|ci)/.test(q)) {
     conversationState.lastTopic = 'qa';
-    return 'QA is a big part of how he builds. He uses Playwright, GitHub Actions, and API mocking to validate critical flows in a repeatable way.';
+    return 'QA is a big part of how he builds. He uses Playwright, GitHub Actions, and API mocking because they help him catch the kinds of issues that can otherwise slip through a quick check.';
   }
 
   if (/(project|projects|built|portfolio|work)/.test(q)) {
     conversationState.lastTopic = 'projects';
-    return 'He has built projects around AI speaking practice, job automation, travel booking, and delivery-platform workflows. The common theme is solving real problems with useful products.';
+    return 'He has built projects around AI speaking practice, job automation, travel booking, and delivery-platform workflows. The thread through them is pretty clear: solve a real problem and make the experience feel smooth.';
   }
 
   if (/(experience|background|journey|story|career)/.test(q)) {
@@ -482,7 +501,7 @@ function getLocalResponse(question) {
   }
 
   if (/(contact|email|linkedin|github|hire|reach you)/.test(q)) {
-    return 'You can reach him at ruchitchudasama123@gmail.com, connect on LinkedIn, or check his GitHub profile for more examples of his work.';
+    return 'You can reach him at ruchitchudasama123@gmail.com, connect on LinkedIn, or check his GitHub profile if you want a closer look at the work. He is always open to thoughtful conversations about building and quality.';
   }
 
   if (/(thanks|thank you|appreciate)/.test(q)) {
@@ -550,6 +569,14 @@ async function handleChatSubmit(event) {
   const reply = await getAssistantResponse(question);
   chatMessages.removeChild(typingMessage);
   appendMessage('bot', reply);
+
+  const shouldShowFollowUp = !/(thanks|thank you|bye|goodbye|see you|talk to you later|what is your name|who are you|how are you)/.test(normalizeText(question));
+  if (shouldShowFollowUp) {
+    window.setTimeout(() => {
+      appendMessage('bot', 'If you want, I can also tell you more about his work, stack, projects, or QA mindset — whichever part you find most interesting.');
+    }, 650);
+  }
+
   setChatStatus(geminiEnabled ? 'Gemini AI online' : 'Local chat mode', false);
   chatInput.disabled = false;
   chatInput.focus();
@@ -579,6 +606,9 @@ if (chatToggle && floatingPanel) {
   chatToggle.addEventListener('click', () => {
     const isOpen = floatingPanel.hidden;
     setPanelVisibility(!isOpen);
+    if (!isOpen) {
+      triggerIntroSequence();
+    }
     try {
       localStorage.setItem(assistantStorageKey, 'true');
     } catch (error) {
@@ -589,7 +619,10 @@ if (chatToggle && floatingPanel) {
   try {
     const hasSeenAssistant = localStorage.getItem(assistantStorageKey);
     if (!hasSeenAssistant) {
-      window.setTimeout(() => setPanelVisibility(true), 900);
+      window.setTimeout(() => {
+        setPanelVisibility(true);
+        triggerIntroSequence();
+      }, 900);
     }
   } catch (error) {
     console.warn('Unable to read assistant state', error);

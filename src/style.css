@@ -587,6 +587,15 @@ h3 {
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.32);
 }
 
+.chat-toggle.is-open .chat-avatar--small,
+.chat-toggle.is-typing .chat-avatar--small {
+  animation: avatarPulse 1.6s infinite ease-in-out;
+}
+
+.chat-toggle.is-open {
+  border-color: rgba(126, 231, 210, 0.34);
+}
+
 .chat-card {
   width: min(100%, 360px);
   border: 1px solid var(--border);
@@ -695,6 +704,17 @@ h3 {
   }
 }
 
+@keyframes avatarPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(126, 231, 210, 0.24);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 7px rgba(126, 231, 210, 0);
+  }
+}
+
 .chat-messages {
   display: grid;
   gap: 10px;
@@ -726,10 +746,12 @@ h3 {
 }
 
 .message.typing {
-  opacity: 0.9;
+  opacity: 0.95;
   display: flex;
   align-items: center;
   min-height: 42px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(126, 231, 210, 0.16);
 }
 
 .typing-dots {
@@ -742,7 +764,8 @@ h3 {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 0 8px rgba(126, 231, 210, 0.25);
   animation: bounce 1s infinite ease-in-out;
 }
 
