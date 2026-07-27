@@ -264,7 +264,7 @@ app.innerHTML = `
               <strong>Ruchit Assistant</strong>
               <span>Profile guide</span>
             </div>
-            <span class="chat-status">Online</span>
+            <span id="chat-status" class="chat-status">Online</span>
           </div>
           <div id="chat-messages" class="chat-messages">
             <div class="message bot">Hi! I can tell you about my stack, projects, QA automation work, and experience. Try one of the prompts below.</div>
@@ -378,7 +378,13 @@ renderPipeline();
 const chatMessages = document.getElementById('chat-messages');
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
+const chatStatus = document.getElementById('chat-status');
 const suggestionButtons = document.querySelectorAll('.chip');
+const geminiEnabled = Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+
+if (chatStatus) {
+  chatStatus.textContent = geminiEnabled ? 'Gemini AI online' : 'Local chat mode';
+}
 
 const conversationState = {
   userName: '',
@@ -464,6 +470,7 @@ function getLocalResponse(question) {
 
 async function getAssistantResponse(question) {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const { userName } = conversationState;
 
   if (apiKey) {
     try {
@@ -474,7 +481,7 @@ async function getAssistantResponse(question) {
           contents: [{
             role: 'user',
             parts: [{
-              text: `You are a concise portfolio assistant for Ruchit Chudasama. Answer in 2 to 4 short sentences. Use the following notes: Java/Spring Boot, React, Node.js/Express, MySQL/PostgreSQL/MongoDB, Playwright, GitHub Actions, AI projects, contract/co-op experience, contact at ruchitchudasama123@gmail.com. Question: ${question}`,
+              text: `You are a friendly portfolio assistant for Ruchit Chudasama. Speak naturally, warmly, and briefly in 2 to 4 sentences. Use these facts about him: Java/Spring Boot, React, Node.js/Express, MySQL/PostgreSQL/MongoDB, Playwright, GitHub Actions, AI projects, contract and co-op experience, and contact at ruchitchudasama123@gmail.com. If the user gives their name, remember it and use it naturally. The user name is ${userName || 'unknown'}. Question: ${question}`,
             }],
           }],
         }),
