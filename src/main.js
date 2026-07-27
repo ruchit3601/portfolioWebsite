@@ -267,7 +267,7 @@ app.innerHTML = `
             <span id="chat-status" class="chat-status">Online</span>
           </div>
           <div id="chat-messages" class="chat-messages">
-            <div class="message bot">Hi! I can tell you about my stack, projects, QA automation work, and experience. Try one of the prompts below.</div>
+            <div class="message bot">Hi! I’m Ruchit Assistant, and I’m here to help you get to know Ruchit in a more natural way. Ask me anything about his work, projects, or personality.</div>
           </div>
           <div class="chat-suggestions" role="list">
             <button class="chip" type="button" data-question="What stack do you use?">What stack do you use?</button>
@@ -388,6 +388,7 @@ if (chatStatus) {
 
 const conversationState = {
   userName: '',
+  lastTopic: '',
 };
 
 function appendMessage(role, text) {
@@ -417,6 +418,20 @@ function getLocalResponse(question) {
     return 'I’m Ruchit Assistant — a friendly guide for Ruchit Chudasama. I help visitors learn about his work in a more conversational way.';
   }
 
+  if (/(tell me more|explain that|go deeper|more about that|say more)/.test(q)) {
+    const topic = conversationState.lastTopic || 'his work';
+    if (topic === 'stack') {
+      return 'He likes building practical systems with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. He enjoys connecting the product layer and the backend layer so the experience feels solid.';
+    }
+    if (topic === 'qa') {
+      return 'His QA mindset is about trust and repeatability. He uses Playwright, GitHub Actions, and API mocking so the critical path is validated consistently instead of relying on a manual pass.';
+    }
+    if (topic === 'projects') {
+      return 'His projects often start from something personal and practical. That is why they tend to focus on real user value, useful automation, and experiences that feel smooth to use.';
+    }
+    return `Sure — I can tell you more about ${topic}.`;
+  }
+
   if (/(my name is|i am |i'm )/.test(q)) {
     const match = q.match(/(?:my name is|i am|i'm)\s+([a-z]+(?:\s+[a-z]+)*)/);
     if (match && match[1]) {
@@ -438,14 +453,17 @@ function getLocalResponse(question) {
   }
 
   if (/(stack|tech|skills|languages|frameworks|java|react|node|spring boot)/.test(q)) {
+    conversationState.lastTopic = 'stack';
     return 'Ruchit works with Java/Spring Boot, React, Node.js/Express, and databases like MySQL, PostgreSQL, and MongoDB. He likes building systems that feel practical and dependable.';
   }
 
   if (/(qa|playwright|testing|test automation|automate|ci)/.test(q)) {
+    conversationState.lastTopic = 'qa';
     return 'QA is a big part of how he builds. He uses Playwright, GitHub Actions, and API mocking to validate critical flows in a repeatable way.';
   }
 
   if (/(project|projects|built|portfolio|work)/.test(q)) {
+    conversationState.lastTopic = 'projects';
     return 'He has built projects around AI speaking practice, job automation, travel booking, and delivery-platform workflows. The common theme is solving real problems with useful products.';
   }
 
@@ -511,8 +529,15 @@ async function handleChatSubmit(event) {
   chatInput.value = '';
   chatInput.disabled = true;
 
+  const typingMessage = document.createElement('div');
+  typingMessage.className = 'message bot typing';
+  typingMessage.textContent = 'Typing...';
+  chatMessages.appendChild(typingMessage);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
   await new Promise((resolve) => setTimeout(resolve, 380));
   const reply = await getAssistantResponse(question);
+  chatMessages.removeChild(typingMessage);
   appendMessage('bot', reply);
   chatInput.disabled = false;
   chatInput.focus();

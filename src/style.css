@@ -625,6 +625,11 @@ h3 {
   color: var(--text);
 }
 
+.message.typing {
+  opacity: 0.8;
+  font-style: italic;
+}
+
 .chat-suggestions {
   display: flex;
   flex-wrap: wrap;
