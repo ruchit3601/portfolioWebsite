@@ -252,37 +252,6 @@ app.innerHTML = `
       </div>
     </section>
 
-    <section class="wrap section reveal">
-      <div class="section-head">
-        <p class="kicker">Quick profile guide</p>
-        <h2>Ask a few questions and learn what I do in a minute.</h2>
-      </div>
-      <div class="chat-shell">
-        <div class="chat-card">
-          <div class="chat-header">
-            <div>
-              <strong>Ruchit Assistant</strong>
-              <span>Profile guide</span>
-            </div>
-            <span id="chat-status" class="chat-status">Online</span>
-          </div>
-          <div id="chat-messages" class="chat-messages">
-            <div class="message bot">Hi! I’m Ruchit Assistant, and I’m here to help you get to know Ruchit in a more natural way. Ask me anything about his work, projects, or personality.</div>
-          </div>
-          <div class="chat-suggestions" role="list">
-            <button class="chip" type="button" data-question="What stack do you use?">What stack do you use?</button>
-            <button class="chip" type="button" data-question="Tell me about your QA work.">Tell me about your QA work.</button>
-            <button class="chip" type="button" data-question="What projects have you built?">What projects have you built?</button>
-            <button class="chip" type="button" data-question="How can I contact you?">How can I contact you?</button>
-          </div>
-          <form id="chat-form" class="chat-form">
-            <input id="chat-input" type="text" name="question" placeholder="Ask about my work, skills, or projects" autocomplete="off" />
-            <button class="btn btn-primary" type="submit">Send</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
     <section id="contact" class="wrap section contact-section reveal">
       <p class="kicker">Contact</p>
       <h2>Let’s build something that ships with confidence.</h2>
@@ -302,6 +271,38 @@ app.innerHTML = `
       <a href="https://www.linkedin.com/in/ruchit-chudasama-040070211/" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </footer>
+
+  <div class="chat-float">
+    <button class="chat-toggle" type="button" aria-expanded="false" aria-controls="floating-chat-panel">
+      <span class="chat-avatar chat-avatar--small" aria-hidden="true">RA</span>
+      <span>Ask me anything</span>
+    </button>
+    <div id="floating-chat-panel" class="chat-card chat-card--floating" hidden>
+      <div class="chat-header">
+        <div class="chat-title-wrap">
+          <div class="chat-avatar" aria-hidden="true">RA</div>
+          <div>
+            <strong>Ruchit Assistant</strong>
+            <span>Profile guide</span>
+          </div>
+        </div>
+        <span id="chat-status" class="chat-status">Online</span>
+      </div>
+      <div id="chat-messages" class="chat-messages">
+        <div class="message bot">Hi! I’m Ruchit Assistant, and I’m here to help you get to know Ruchit in a more natural way. Ask me anything about his work, projects, or personality.</div>
+      </div>
+      <div class="chat-suggestions" role="list">
+        <button class="chip" type="button" data-question="What stack do you use?">What stack do you use?</button>
+        <button class="chip" type="button" data-question="Tell me about your QA work.">Tell me about your QA work.</button>
+        <button class="chip" type="button" data-question="What projects have you built?">What projects have you built?</button>
+        <button class="chip" type="button" data-question="How can I contact you?">How can I contact you?</button>
+      </div>
+      <form id="chat-form" class="chat-form">
+        <input id="chat-input" type="text" name="question" placeholder="Ask about my work, skills, or projects" autocomplete="off" />
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
 `;
 
 const pipeline = document.getElementById('pipeline');
@@ -379,11 +380,20 @@ const chatMessages = document.getElementById('chat-messages');
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const chatStatus = document.getElementById('chat-status');
+const chatToggle = document.querySelector('.chat-toggle');
+const floatingPanel = document.getElementById('floating-chat-panel');
 const suggestionButtons = document.querySelectorAll('.chip');
 const geminiEnabled = Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+const assistantStorageKey = 'portfolio-assistant-opened';
+
+function setChatStatus(label, isTyping = false) {
+  if (!chatStatus) return;
+  chatStatus.textContent = label;
+  chatStatus.classList.toggle('is-typing', isTyping);
+}
 
 if (chatStatus) {
-  chatStatus.textContent = geminiEnabled ? 'Gemini AI online' : 'Local chat mode';
+  setChatStatus(geminiEnabled ? 'Gemini AI online' : 'Local chat mode');
 }
 
 const conversationState = {
@@ -531,14 +541,16 @@ async function handleChatSubmit(event) {
 
   const typingMessage = document.createElement('div');
   typingMessage.className = 'message bot typing';
-  typingMessage.textContent = 'Typing...';
+  typingMessage.innerHTML = '<span class="typing-dots" aria-label="assistant typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>';
   chatMessages.appendChild(typingMessage);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 
+  setChatStatus('Typing…', true);
   await new Promise((resolve) => setTimeout(resolve, 380));
   const reply = await getAssistantResponse(question);
   chatMessages.removeChild(typingMessage);
   appendMessage('bot', reply);
+  setChatStatus(geminiEnabled ? 'Gemini AI online' : 'Local chat mode', false);
   chatInput.disabled = false;
   chatInput.focus();
 }
@@ -554,6 +566,34 @@ suggestionButtons.forEach((button) => {
 
 if (chatForm) {
   chatForm.addEventListener('submit', handleChatSubmit);
+}
+
+function setPanelVisibility(isOpen) {
+  if (!floatingPanel || !chatToggle) return;
+  floatingPanel.hidden = !isOpen;
+  chatToggle.setAttribute('aria-expanded', String(isOpen));
+  chatToggle.classList.toggle('is-open', isOpen);
+}
+
+if (chatToggle && floatingPanel) {
+  chatToggle.addEventListener('click', () => {
+    const isOpen = floatingPanel.hidden;
+    setPanelVisibility(!isOpen);
+    try {
+      localStorage.setItem(assistantStorageKey, 'true');
+    } catch (error) {
+      console.warn('Unable to persist assistant state', error);
+    }
+  });
+
+  try {
+    const hasSeenAssistant = localStorage.getItem(assistantStorageKey);
+    if (!hasSeenAssistant) {
+      window.setTimeout(() => setPanelVisibility(true), 900);
+    }
+  } catch (error) {
+    console.warn('Unable to read assistant state', error);
+  }
 }
 
 const observer = new IntersectionObserver((entries) => {
